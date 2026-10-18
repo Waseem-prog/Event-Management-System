@@ -18,15 +18,6 @@ function MyEvents() {
   const user = useSelector(selectCurrentUser)
   const registrations = useSelector(selectUserRegistrations)
 
-  if (!user) {
-    return (
-      <main className="page">
-        <h1>My Events</h1>
-        <EmptyState title="Please log in" message="Log in to see the events you registered for." />
-      </main>
-    )
-  }
-
   // Split by date: soonest upcoming first, most recent completed first.
   const when = (r) => r.event.dateTime || r.event.localDate || ''
   const byDate = (a, b) => when(a).localeCompare(when(b))
