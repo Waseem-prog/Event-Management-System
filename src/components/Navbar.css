@@ -31,3 +31,21 @@
 .navbar__links a.active {
   border-bottom-color: #f59e0b;
 }
+
+.navbar__links {
+  align-items: center;
+}
+
+.navbar__user {
+  color: #d1d5db;
+}
+
+.navbar__logout {
+  padding: 0.25rem 0.75rem;
+  font: inherit;
+  color: #fff;
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
