@@ -13,3 +13,12 @@ export function formatEventDate(localDate, localTime) {
   const time = date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
   return `${day}, ${time}`
 }
+
+// An event is "completed" once its start time has passed. Prefer the exact UTC
+// dateTime; fall back to the local date (treated as the end of that day) when
+// Ticketmaster gives no time.
+export function isPastEvent(event, now = new Date()) {
+  if (event.dateTime) return new Date(event.dateTime) < now
+  if (event.localDate) return new Date(`${event.localDate}T23:59:59`) < now
+  return false
+}
