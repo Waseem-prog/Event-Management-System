@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import FormField from '../components/FormField'
 import { clearError, loginUser, selectAuthError } from '../features/auth/authSlice'
 import { validateLogin } from '../utils/validators'
@@ -9,6 +9,10 @@ import './Auth.css'
 function Login() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
+  // Where to go after success: the page the user came from, or the events list.
+  const from = location.state?.from
+  const returnTo = from ? from.pathname + (from.search || '') : '/events'
   const authError = useSelector(selectAuthError)
   const [values, setValues] = useState({ email: '', password: '' })
   const [errors, setErrors] = useState({})
@@ -28,7 +32,7 @@ function Login() {
     setSubmitting(true)
     const result = await dispatch(loginUser(values))
     setSubmitting(false)
-    if (loginUser.fulfilled.match(result)) navigate('/events', { replace: true })
+    if (loginUser.fulfilled.match(result)) navigate(returnTo, { replace: true })
   }
 
   return (
@@ -45,7 +49,7 @@ function Login() {
           {submitting ? 'Logging in...' : 'Log in'}
         </button>
         <p className="auth-card__switch">
-          New here? <Link to="/register">Create an account</Link>
+          New here? <Link to="/register" state={location.state}>Create an account</Link>
         </p>
       </form>
     </main>

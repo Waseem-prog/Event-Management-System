@@ -42,6 +42,9 @@ function pickImage(images = []) {
   return best?.url || null
 }
 
+// The API uses the literal text "Undefined" when a classification is unknown.
+const clean = (name) => (name && name !== 'Undefined' ? name : null)
+
 // Reduce the big API object to the fields the UI needs. Many fields are
 // optional, so everything uses optional chaining with fallbacks.
 export function normalizeEvent(raw) {
@@ -57,8 +60,8 @@ export function normalizeEvent(raw) {
     localTime: raw.dates?.start?.localTime || null,
     dateTime: raw.dates?.start?.dateTime || null,
     status: raw.dates?.status?.code || null,
-    category: classification?.segment?.name || null,
-    genre: classification?.genre?.name || null,
+    category: clean(classification?.segment?.name),
+    genre: clean(classification?.genre?.name),
     venue: venue?.name || null,
     city: venue?.city?.name || null,
     state: venue?.state?.stateCode || null,
@@ -90,6 +93,6 @@ export async function getCategories(signal) {
   const data = await request('classifications.json', { size: 50 }, signal)
   const names = (data._embedded?.classifications || [])
     .map((c) => c.segment?.name)
-    .filter((name) => name && name !== 'Undefined') // API returns a placeholder segment
+    .filter(clean)
   return [...new Set(names)]
 }
