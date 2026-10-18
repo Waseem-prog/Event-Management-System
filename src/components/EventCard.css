@@ -1,0 +1,62 @@
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.event-card__image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.event-card__image--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  background: #e5e7eb;
+}
+
+.event-card__body {
+  padding: 0.9rem 1rem 1rem;
+}
+
+.event-card__badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1e40af;
+  background: #dbeafe;
+  border-radius: 999px;
+}
+
+.event-card__title {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.event-card__title a {
+  text-decoration: none;
+}
+
+.event-card__title a:hover {
+  text-decoration: underline;
+}
+
+.event-card__meta {
+  margin: 0.15rem 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
