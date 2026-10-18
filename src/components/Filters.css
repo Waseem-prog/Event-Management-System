@@ -43,3 +43,33 @@
   color: #1f2937;
   background: #e5e7eb;
 }
+
+.filter-bar__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-bottom: 0.5rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+}
+
+.chip {
+  padding: 0.35rem 0.9rem;
+  font: inherit;
+  color: #1f2937;
+  background: #fff;
+  border: 1px solid #9ca3af;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.chip--active {
+  color: #fff;
+  background: #2563eb;
+  border-color: #2563eb;
+}
