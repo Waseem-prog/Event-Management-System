@@ -1,11 +1,21 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getCategories, getEventById, getEvents } from '../../services/ticketmaster'
 
+export const DEFAULT_FILTERS = {
+  keyword: '',
+  city: '',
+  countryCode: '', // empty = search worldwide (Ticketmaster has little inventory in PK)
+  category: '',
+  startDate: '', // YYYY-MM-DD from the date inputs
+  endDate: '',
+  sort: 'date,asc',
+}
+
 const initialState = {
   items: [],
   status: 'idle', // idle | loading | succeeded | failed
   error: null,
-  filters: { keyword: '' },
+  filters: DEFAULT_FILTERS,
   page: 0, // Ticketmaster pages are 0-based
   totalPages: 0,
   totalElements: 0,
@@ -21,9 +31,21 @@ const nowIso = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 
 export const fetchEvents = createAsyncThunk('events/fetchEvents', async (_, { getState, signal }) => {
   const { page, filters } = getState().events
-  // Default view: upcoming events sorted by date, narrowed by the keyword.
+  // Never show past events: the start is "now" unless a later start date is chosen.
+  const now = nowIso()
+  const chosenStart = filters.startDate ? `${filters.startDate}T00:00:00Z` : ''
+  const startDateTime = chosenStart > now ? chosenStart : now
   return getEvents(
-    { page, keyword: filters.keyword, startDateTime: nowIso(), sort: 'date,asc' },
+    {
+      page,
+      keyword: filters.keyword,
+      city: filters.city,
+      countryCode: filters.countryCode,
+      classificationName: filters.category,
+      startDateTime,
+      endDateTime: filters.endDate ? `${filters.endDate}T23:59:59Z` : '',
+      sort: filters.sort,
+    },
     signal,
   )
 })
@@ -42,6 +64,10 @@ const eventsSlice = createSlice({
   reducers: {
     setPage(state, action) {
       state.page = action.payload
+    },
+    clearFilters(state) {
+      state.filters = DEFAULT_FILTERS
+      state.page = 0
     },
     // Merge new filter values; any filter change goes back to the first page.
     setFilters(state, action) {
@@ -90,6 +116,6 @@ const eventsSlice = createSlice({
   },
 })
 
-export const { setPage, setFilters } = eventsSlice.actions
+export const { setPage, setFilters, clearFilters } = eventsSlice.actions
 export const selectEvents = (state) => state.events
 export default eventsSlice.reducer
