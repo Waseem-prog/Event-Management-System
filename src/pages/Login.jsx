@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import FormField from '../components/FormField'
 import { clearError, loginUser, selectAuthError } from '../features/auth/authSlice'
+import { useDocumentTitle } from '../utils/useDocumentTitle'
 import { validateLogin } from '../utils/validators'
 import './Auth.css'
 
 function Login() {
+  useDocumentTitle('Log in')
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()

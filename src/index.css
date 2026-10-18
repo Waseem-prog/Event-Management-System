@@ -97,3 +97,19 @@ a {
 .btn--danger:hover:not(:disabled) {
   background: #b91c1c;
 }
+
+/* Skip link: hidden until focused with the keyboard (Tab) */
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -3rem;
+  z-index: 200;
+  padding: 0.5rem 1rem;
+  color: #fff;
+  background: var(--color-primary);
+  border-radius: 6px;
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+}

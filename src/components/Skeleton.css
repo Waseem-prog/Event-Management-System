@@ -1,0 +1,38 @@
+.skeleton {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: 6px;
+}
+
+.skeleton--image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0;
+}
+
+.skeleton--line {
+  height: 1rem;
+  margin: 0.6rem 0;
+}
+
+.skeleton--short {
+  width: 35%;
+}
+
+.skeleton--medium {
+  width: 65%;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .loader__spinner {
+    animation: none;
+  }
+}

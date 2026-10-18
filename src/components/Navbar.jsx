@@ -18,7 +18,7 @@ function Navbar() {
       <NavLink to="/events" className="navbar__brand">
         EventHub
       </NavLink>
-      <nav className="navbar__links">
+      <nav className="navbar__links" aria-label="Main navigation">
         <NavLink to="/events">Events</NavLink>
         <NavLink to="/my-events">My Events</NavLink>
         {user ? (
