@@ -29,7 +29,7 @@ async function request(path, params = {}, signal) {
     response = await fetch(url, { signal })
   } catch (err) {
     if (err.name === 'AbortError') throw err
-    throw new Error('Network error. Check your internet connection and try again.')
+    throw new Error('Network error. Check your internet connection and try again.', { cause: err })
   }
   if (!response.ok) throw new Error(friendlyError(response.status))
   return response.json()
