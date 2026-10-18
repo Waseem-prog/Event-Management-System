@@ -27,17 +27,25 @@ const initialState = {
   categories: [],
 }
 
-// Ticketmaster wants dates as YYYY-MM-DDTHH:mm:ssZ (no milliseconds).
-const nowIso = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
+// Local date-time in the format Ticketmaster expects for localStartDateTime
+// (YYYY-MM-DDTHH:mm:ss, no timezone, no milliseconds).
+const pad = (n) => String(n).padStart(2, '0')
+const nowLocal = () => {
+  const d = new Date()
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
 
 export const fetchEvents = createAsyncThunk('events/fetchEvents', async (_, { getState, signal }) => {
   const { page, filters } = getState().events
   // Upcoming mode: the start is "now" unless a later start date is chosen.
-  // With the toggle off, only the chosen start date (if any) limits the results.
-  const now = nowIso()
-  const chosenStart = filters.startDate ? `${filters.startDate}T00:00:00Z` : ''
-  let startDateTime = chosenStart
-  if (filters.upcoming && chosenStart < now) startDateTime = now
+  // With the toggle off, only the chosen dates (if any) limit the results.
+  // localStartDateTime ("from,to", "*" = open end) filters on when the event
+  // itself starts. The plain startDateTime/endDateTime pair also returns
+  // long-running events that began years ago, which looked wrong.
+  let from = filters.startDate ? `${filters.startDate}T00:00:00` : ''
+  const now = nowLocal()
+  if (filters.upcoming && from < now) from = now
+  const to = filters.endDate ? `${filters.endDate}T23:59:59` : ''
   return getEvents(
     {
       page,
@@ -45,8 +53,7 @@ export const fetchEvents = createAsyncThunk('events/fetchEvents', async (_, { ge
       city: filters.city,
       countryCode: filters.countryCode,
       classificationName: filters.category,
-      startDateTime,
-      endDateTime: filters.endDate ? `${filters.endDate}T23:59:59Z` : '',
+      localStartDateTime: from || to ? `${from || '*'},${to || '*'}` : '',
       sort: filters.sort,
     },
     signal,
