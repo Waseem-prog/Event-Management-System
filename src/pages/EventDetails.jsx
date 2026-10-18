@@ -6,6 +6,7 @@ import Loader from '../components/Loader'
 import RegisterButton from '../components/RegisterButton'
 import { fetchEventById, selectEvents } from '../features/events/eventsSlice'
 import { formatEventDate } from '../utils/dates'
+import { useDocumentTitle } from '../utils/useDocumentTitle'
 import '../components/States.css'
 import '../components/EventCard.css'
 import './EventDetails.css'
@@ -45,6 +46,7 @@ function EventDetails() {
   // `selected` may still hold the previously viewed event for one render,
   // so make sure it matches the id in the URL before showing it.
   const event = selected?.id === id ? selected : null
+  useDocumentTitle(event?.name || 'Event details')
 
   return (
     <main className="page">

@@ -10,9 +10,11 @@ import {
   selectUserRegistrations,
 } from '../features/registrations/registrationsSlice'
 import { isPastEvent } from '../utils/dates'
+import { useDocumentTitle } from '../utils/useDocumentTitle'
 import '../components/States.css'
 
 function MyEvents() {
+  useDocumentTitle('My Events')
   const dispatch = useDispatch()
   const { showToast } = useToast()
   const user = useSelector(selectCurrentUser)

@@ -5,7 +5,7 @@ import EmptyState from '../components/EmptyState'
 import ErrorMessage from '../components/ErrorMessage'
 import FilterBar from '../components/FilterBar'
 import EventCard from '../components/EventCard'
-import Loader from '../components/Loader'
+import EventCardSkeleton from '../components/EventCardSkeleton'
 import Pagination from '../components/Pagination'
 import SearchBar from '../components/SearchBar'
 import {
@@ -16,9 +16,12 @@ import {
   setFilters,
   setPage,
 } from '../features/events/eventsSlice'
+import { useDocumentTitle } from '../utils/useDocumentTitle'
+import '../components/Skeleton.css'
 import '../components/States.css'
 
 function Events() {
+  useDocumentTitle('Events')
   const dispatch = useDispatch()
   const { items, status, error, page, totalPages, filters, categories } = useSelector(selectEvents)
 
@@ -53,7 +56,7 @@ function Events() {
         onSelect={(category) => handleFilterChange({ category })}
       />
       <FilterBar filters={filters} onChange={handleFilterChange} onClear={handleClear} />
-      {status === 'loading' && <Loader label="Loading events..." />}
+      {status === 'loading' && <EventCardSkeleton />}
       {status === 'failed' && <ErrorMessage message={error} onRetry={retry} />}
       {status === 'succeeded' && items.length === 0 && (
         <EmptyState title="No events found" message="Try a different search or clear the filters." />

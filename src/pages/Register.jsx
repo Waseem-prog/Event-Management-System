@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import FormField from '../components/FormField'
 import { clearError, registerUser, selectAuthError } from '../features/auth/authSlice'
+import { useDocumentTitle } from '../utils/useDocumentTitle'
 import { validateRegister } from '../utils/validators'
 import './Auth.css'
 
 function Register() {
+  useDocumentTitle('Register')
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()

@@ -29,7 +29,7 @@ async function request(path, params = {}, signal) {
     response = await fetch(url, { signal })
   } catch (err) {
     if (err.name === 'AbortError') throw err
-    throw new Error('Network error. Check your internet connection and try again.', { cause: err })
+    throw new Error('Could not load data from Ticketmaster. Check your internet connection and try again. (If you opened an old link, the event may no longer exist.)', { cause: err })
   }
   if (!response.ok) throw new Error(friendlyError(response.status))
   return response.json()

@@ -29,7 +29,7 @@
 
 /* NavLink adds the "active" class for the current route */
 .navbar__links a.active {
-  border-bottom-color: #f59e0b;
+  border-bottom-color: var(--color-accent);
 }
 
 .navbar__links {
@@ -48,4 +48,15 @@
   border: 1px solid #fff;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.navbar__logout:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 480px) {
+  .navbar__links {
+    gap: 0.6rem 0.9rem;
+    font-size: 0.95rem;
+  }
 }
