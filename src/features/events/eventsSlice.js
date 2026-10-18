@@ -1,10 +1,22 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getCategories, getEventById, getEvents } from '../../services/ticketmaster'
 
+export const DEFAULT_FILTERS = {
+  keyword: '',
+  city: '',
+  countryCode: '', // empty = search worldwide (Ticketmaster has little inventory in PK)
+  category: '',
+  startDate: '', // YYYY-MM-DD from the date inputs
+  endDate: '',
+  sort: 'date,asc',
+  upcoming: true, // default view: only events from now onwards
+}
+
 const initialState = {
   items: [],
   status: 'idle', // idle | loading | succeeded | failed
   error: null,
+  filters: DEFAULT_FILTERS,
   page: 0, // Ticketmaster pages are 0-based
   totalPages: 0,
   totalElements: 0,
@@ -19,9 +31,26 @@ const initialState = {
 const nowIso = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 
 export const fetchEvents = createAsyncThunk('events/fetchEvents', async (_, { getState, signal }) => {
-  const { page } = getState().events
-  // Default view: upcoming events sorted by date.
-  return getEvents({ page, startDateTime: nowIso(), sort: 'date,asc' }, signal)
+  const { page, filters } = getState().events
+  // Upcoming mode: the start is "now" unless a later start date is chosen.
+  // With the toggle off, only the chosen start date (if any) limits the results.
+  const now = nowIso()
+  const chosenStart = filters.startDate ? `${filters.startDate}T00:00:00Z` : ''
+  let startDateTime = chosenStart
+  if (filters.upcoming && chosenStart < now) startDateTime = now
+  return getEvents(
+    {
+      page,
+      keyword: filters.keyword,
+      city: filters.city,
+      countryCode: filters.countryCode,
+      classificationName: filters.category,
+      startDateTime,
+      endDateTime: filters.endDate ? `${filters.endDate}T23:59:59Z` : '',
+      sort: filters.sort,
+    },
+    signal,
+  )
 })
 
 export const fetchEventById = createAsyncThunk('events/fetchEventById', (id, { signal }) =>
@@ -38,6 +67,15 @@ const eventsSlice = createSlice({
   reducers: {
     setPage(state, action) {
       state.page = action.payload
+    },
+    clearFilters(state) {
+      state.filters = DEFAULT_FILTERS
+      state.page = 0
+    },
+    // Merge new filter values; any filter change goes back to the first page.
+    setFilters(state, action) {
+      state.filters = { ...state.filters, ...action.payload }
+      state.page = 0
     },
   },
   extraReducers: (builder) => {
@@ -81,6 +119,6 @@ const eventsSlice = createSlice({
   },
 })
 
-export const { setPage } = eventsSlice.actions
+export const { setPage, setFilters, clearFilters } = eventsSlice.actions
 export const selectEvents = (state) => state.events
 export default eventsSlice.reducer
