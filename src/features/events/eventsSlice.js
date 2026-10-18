@@ -27,17 +27,19 @@ const initialState = {
   categories: [],
 }
 
-// Ticketmaster wants dates as YYYY-MM-DDTHH:mm:ssZ (no milliseconds).
-const nowIso = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
+// Ticketmaster wants UTC times as YYYY-MM-DDTHH:mm:ssZ (no milliseconds).
+const nowUtc = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 
 export const fetchEvents = createAsyncThunk('events/fetchEvents', async (_, { getState, signal }) => {
   const { page, filters } = getState().events
-  // Upcoming mode: the start is "now" unless a later start date is chosen.
-  // With the toggle off, only the chosen start date (if any) limits the results.
-  const now = nowIso()
-  const chosenStart = filters.startDate ? `${filters.startDate}T00:00:00Z` : ''
-  let startDateTime = chosenStart
-  if (filters.upcoming && chosenStart < now) startDateTime = now
+  // Two different filters are used on purpose:
+  // - startDateTime (an exact UTC moment) implements "Upcoming only", so events
+  //   that already started anywhere in the world are hidden.
+  // - localStartDateTime ("from,to", "*" = open end, venue-local time) implements
+  //   the date range the user picks. Combining startDateTime with endDateTime
+  //   would also return long-running events that began years ago.
+  const from = filters.startDate ? `${filters.startDate}T00:00:00` : ''
+  const to = filters.endDate ? `${filters.endDate}T23:59:59` : ''
   return getEvents(
     {
       page,
@@ -45,8 +47,8 @@ export const fetchEvents = createAsyncThunk('events/fetchEvents', async (_, { ge
       city: filters.city,
       countryCode: filters.countryCode,
       classificationName: filters.category,
-      startDateTime,
-      endDateTime: filters.endDate ? `${filters.endDate}T23:59:59Z` : '',
+      startDateTime: filters.upcoming ? nowUtc() : '',
+      localStartDateTime: from || to ? `${from || '*'},${to || '*'}` : '',
       sort: filters.sort,
     },
     signal,

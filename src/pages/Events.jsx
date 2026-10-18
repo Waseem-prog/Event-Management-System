@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import CategoryChips from '../components/CategoryChips'
 import EmptyState from '../components/EmptyState'
@@ -23,6 +23,7 @@ import '../components/States.css'
 function Events() {
   useDocumentTitle('Events')
   const dispatch = useDispatch()
+  const [searchResetKey, setSearchResetKey] = useState(0) // bump to empty the search box
   const { items, status, error, page, totalPages, filters, categories } = useSelector(selectEvents)
 
   // Load the category list once (it never changes during a session).
@@ -42,14 +43,17 @@ function Events() {
   )
 
   const handleFilterChange = (changes) => dispatch(setFilters(changes))
-  const handleClear = () => dispatch(clearFilters())
+  const handleClear = () => {
+    dispatch(clearFilters())
+    setSearchResetKey((k) => k + 1)
+  }
 
   const retry = () => dispatch(fetchEvents())
 
   return (
     <main className="page">
       <h1>{filters.upcoming ? 'Upcoming events' : 'All events'}</h1>
-      <SearchBar value={filters.keyword} onSearch={handleSearch} />
+      <SearchBar key={searchResetKey} value={filters.keyword} onSearch={handleSearch} />
       <CategoryChips
         categories={categories}
         selected={filters.category}
