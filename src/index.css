@@ -23,3 +23,31 @@ a {
   margin: 0 auto;
   padding: 1.5rem 1rem;
 }
+
+/* Shared button styles */
+.btn {
+  text-decoration: none;
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #2563eb;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--secondary {
+  color: #1f2937;
+  background: #e5e7eb;
+}
