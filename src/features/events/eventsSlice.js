@@ -9,6 +9,7 @@ export const DEFAULT_FILTERS = {
   startDate: '', // YYYY-MM-DD from the date inputs
   endDate: '',
   sort: 'date,asc',
+  upcoming: true, // default view: only events from now onwards
 }
 
 const initialState = {
@@ -31,10 +32,12 @@ const nowIso = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 
 export const fetchEvents = createAsyncThunk('events/fetchEvents', async (_, { getState, signal }) => {
   const { page, filters } = getState().events
-  // Never show past events: the start is "now" unless a later start date is chosen.
+  // Upcoming mode: the start is "now" unless a later start date is chosen.
+  // With the toggle off, only the chosen start date (if any) limits the results.
   const now = nowIso()
   const chosenStart = filters.startDate ? `${filters.startDate}T00:00:00Z` : ''
-  const startDateTime = chosenStart > now ? chosenStart : now
+  let startDateTime = chosenStart
+  if (filters.upcoming && chosenStart < now) startDateTime = now
   return getEvents(
     {
       page,

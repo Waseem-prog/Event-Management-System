@@ -76,6 +76,14 @@ function FilterBar({ filters, onChange, onClear }) {
           ))}
         </select>
       </div>
+      <label className="filter-bar__toggle">
+        <input
+          type="checkbox"
+          checked={filters.upcoming}
+          onChange={(e) => onChange({ upcoming: e.target.checked })}
+        />
+        Upcoming only
+      </label>
       <button type="button" className="btn btn--secondary" onClick={onClear}>
         Clear filters
       </button>
