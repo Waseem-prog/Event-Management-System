@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import FormField from '../components/FormField'
 import { clearError, registerUser, selectAuthError } from '../features/auth/authSlice'
 import { validateRegister } from '../utils/validators'
@@ -9,6 +9,10 @@ import './Auth.css'
 function Register() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
+  // Where to go after success: the page the user came from, or the events list.
+  const from = location.state?.from
+  const returnTo = from ? from.pathname + (from.search || '') : '/events'
   const authError = useSelector(selectAuthError)
   const [values, setValues] = useState({ name: '', email: '', password: '', confirmPassword: '' })
   const [errors, setErrors] = useState({})
@@ -29,7 +33,7 @@ function Register() {
     setSubmitting(true)
     const result = await dispatch(registerUser(values))
     setSubmitting(false)
-    if (registerUser.fulfilled.match(result)) navigate('/events', { replace: true })
+    if (registerUser.fulfilled.match(result)) navigate(returnTo, { replace: true })
   }
 
   return (
@@ -51,7 +55,7 @@ function Register() {
           {submitting ? 'Creating account...' : 'Register'}
         </button>
         <p className="auth-card__switch">
-          Already have an account? <Link to="/login">Log in</Link>
+          Already have an account? <Link to="/login" state={location.state}>Log in</Link>
         </p>
       </form>
     </main>

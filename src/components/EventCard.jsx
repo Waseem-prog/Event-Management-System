@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { formatEventDate } from '../utils/dates'
+import RegisterButton from './RegisterButton'
 import './EventCard.css'
 
 function EventCard({ event }) {
@@ -18,6 +19,9 @@ function EventCard({ event }) {
         </h2>
         <p className="event-card__meta">{formatEventDate(event.localDate, event.localTime)}</p>
         {place && <p className="event-card__meta">{place}</p>}
+        <div className="event-card__actions">
+          <RegisterButton event={event} />
+        </div>
       </div>
     </article>
   )
