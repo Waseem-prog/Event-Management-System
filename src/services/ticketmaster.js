@@ -90,6 +90,6 @@ export async function getCategories(signal) {
   const data = await request('classifications.json', { size: 50 }, signal)
   const names = (data._embedded?.classifications || [])
     .map((c) => c.segment?.name)
-    .filter(Boolean)
+    .filter((name) => name && name !== 'Undefined') // API returns a placeholder segment
   return [...new Set(names)]
 }
