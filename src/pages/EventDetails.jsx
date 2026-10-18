@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import ErrorMessage from '../components/ErrorMessage'
 import Loader from '../components/Loader'
+import RegisterButton from '../components/RegisterButton'
 import { fetchEventById, selectEvents } from '../features/events/eventsSlice'
 import { formatEventDate } from '../utils/dates'
 import '../components/States.css'
@@ -107,6 +108,7 @@ function EventDetails() {
               </section>
             )}
             <div className="details__actions">
+              <RegisterButton event={event} />
               {event.url && (
                 <a
                   className="btn btn--link"
