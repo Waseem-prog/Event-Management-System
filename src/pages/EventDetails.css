@@ -46,3 +46,23 @@
 .back-link {
   margin-bottom: 1rem;
 }
+
+.details__section h2 {
+  margin: 1.25rem 0 0.4rem;
+  font-size: 1.1rem;
+}
+
+.details__section p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.details__seatmap {
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+.details__status {
+  font-weight: 600;
+  color: #b91c1c;
+}

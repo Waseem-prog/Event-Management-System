@@ -9,6 +9,22 @@ import '../components/States.css'
 import '../components/EventCard.css'
 import './EventDetails.css'
 
+// Format a price range like "$45 - $120"; one number if min equals max.
+function formatPrice(price) {
+  if (!price) return null
+  const fmt = (n) =>
+    new Intl.NumberFormat(undefined, { style: 'currency', currency: price.currency || 'USD' }).format(n)
+  return price.min === price.max ? fmt(price.min) : `${fmt(price.min)} - ${fmt(price.max)}`
+}
+
+// Ticketmaster status codes -> readable text.
+const STATUS_LABELS = {
+  cancelled: 'Cancelled',
+  postponed: 'Postponed',
+  rescheduled: 'Rescheduled',
+  offsale: 'Off sale',
+}
+
 function EventDetails() {
   const { id } = useParams()
   const dispatch = useDispatch()
@@ -57,9 +73,39 @@ function EventDetails() {
                   .filter(Boolean)
                   .join(', ') || 'To be announced'}
               </dd>
+              {event.price && (
+                <>
+                  <dt>Price</dt>
+                  <dd>{formatPrice(event.price)}</dd>
+                </>
+              )}
+              {STATUS_LABELS[event.status] && (
+                <>
+                  <dt>Status</dt>
+                  <dd className="details__status">{STATUS_LABELS[event.status]}</dd>
+                </>
+              )}
               <dt>Type</dt>
               <dd>{[event.category, event.genre].filter(Boolean).join(' / ') || 'Not specified'}</dd>
             </dl>
+            {event.info && (
+              <section className="details__section">
+                <h2>Event info</h2>
+                <p>{event.info}</p>
+              </section>
+            )}
+            {event.pleaseNote && (
+              <section className="details__section">
+                <h2>Please note</h2>
+                <p>{event.pleaseNote}</p>
+              </section>
+            )}
+            {event.seatmap && (
+              <section className="details__section">
+                <h2>Seat map</h2>
+                <img className="details__seatmap" src={event.seatmap} alt="Venue seat map" loading="lazy" />
+              </section>
+            )}
             <div className="details__actions">
               {event.url && (
                 <a
