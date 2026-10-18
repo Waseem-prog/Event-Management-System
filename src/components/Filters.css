@@ -39,11 +39,6 @@
   background: #fff;
 }
 
-.btn--secondary {
-  color: #1f2937;
-  background: #e5e7eb;
-}
-
 .filter-bar__toggle {
   display: flex;
   align-items: center;
