@@ -51,3 +51,7 @@ a {
   color: #1f2937;
   background: #e5e7eb;
 }
+
+.btn--danger {
+  background: #dc2626;
+}
