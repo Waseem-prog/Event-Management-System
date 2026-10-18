@@ -35,7 +35,11 @@ export const fetchCategories = createAsyncThunk('events/fetchCategories', (_, { 
 const eventsSlice = createSlice({
   name: 'events',
   initialState,
-  reducers: {},
+  reducers: {
+    setPage(state, action) {
+      state.page = action.payload
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchEvents.pending, (state, action) => {
@@ -77,5 +81,6 @@ const eventsSlice = createSlice({
   },
 })
 
+export const { setPage } = eventsSlice.actions
 export const selectEvents = (state) => state.events
 export default eventsSlice.reducer
