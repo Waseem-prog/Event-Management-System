@@ -4,12 +4,13 @@ import EmptyState from '../components/EmptyState'
 import ErrorMessage from '../components/ErrorMessage'
 import EventCard from '../components/EventCard'
 import Loader from '../components/Loader'
-import { fetchEvents, selectEvents } from '../features/events/eventsSlice'
+import Pagination from '../components/Pagination'
+import { fetchEvents, selectEvents, setPage } from '../features/events/eventsSlice'
 import '../components/States.css'
 
 function Events() {
   const dispatch = useDispatch()
-  const { items, status, error, page } = useSelector(selectEvents)
+  const { items, status, error, page, totalPages } = useSelector(selectEvents)
 
   // Reload whenever the page number changes (and once on first visit).
   useEffect(() => {
@@ -28,11 +29,21 @@ function Events() {
         <EmptyState title="No events found" message="Try again later." />
       )}
       {status === 'succeeded' && items.length > 0 && (
-        <div className="event-grid">
-          {items.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </div>
+        <>
+          <div className="event-grid">
+            {items.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onChange={(next) => {
+              dispatch(setPage(next))
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
+          />
+        </>
       )}
     </main>
   )
