@@ -27,24 +27,18 @@ const initialState = {
   categories: [],
 }
 
-// Local date-time in the format Ticketmaster expects for localStartDateTime
-// (YYYY-MM-DDTHH:mm:ss, no timezone, no milliseconds).
-const pad = (n) => String(n).padStart(2, '0')
-const nowLocal = () => {
-  const d = new Date()
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
-}
+// Ticketmaster wants UTC times as YYYY-MM-DDTHH:mm:ssZ (no milliseconds).
+const nowUtc = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 
 export const fetchEvents = createAsyncThunk('events/fetchEvents', async (_, { getState, signal }) => {
   const { page, filters } = getState().events
-  // Upcoming mode: the start is "now" unless a later start date is chosen.
-  // With the toggle off, only the chosen dates (if any) limit the results.
-  // localStartDateTime ("from,to", "*" = open end) filters on when the event
-  // itself starts. The plain startDateTime/endDateTime pair also returns
-  // long-running events that began years ago, which looked wrong.
-  let from = filters.startDate ? `${filters.startDate}T00:00:00` : ''
-  const now = nowLocal()
-  if (filters.upcoming && from < now) from = now
+  // Two different filters are used on purpose:
+  // - startDateTime (an exact UTC moment) implements "Upcoming only", so events
+  //   that already started anywhere in the world are hidden.
+  // - localStartDateTime ("from,to", "*" = open end, venue-local time) implements
+  //   the date range the user picks. Combining startDateTime with endDateTime
+  //   would also return long-running events that began years ago.
+  const from = filters.startDate ? `${filters.startDate}T00:00:00` : ''
   const to = filters.endDate ? `${filters.endDate}T23:59:59` : ''
   return getEvents(
     {
@@ -53,6 +47,7 @@ export const fetchEvents = createAsyncThunk('events/fetchEvents', async (_, { ge
       city: filters.city,
       countryCode: filters.countryCode,
       classificationName: filters.category,
+      startDateTime: filters.upcoming ? nowUtc() : '',
       localStartDateTime: from || to ? `${from || '*'},${to || '*'}` : '',
       sort: filters.sort,
     },
